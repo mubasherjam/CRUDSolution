@@ -10,11 +10,14 @@ namespace CRUDTests
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countriesService;
+        // constructor
 
         public CountriesServiceTest()
         {
             _countriesService = new CountriesService();
         }
+
+        #region AddCountry() Tests
 
         // when CountryAddRequest is null, then AddCountry() should throw ArgumentNullException
         [Fact]
@@ -80,9 +83,61 @@ namespace CRUDTests
             };
             // Act
             CountryResponse response = _countriesService.AddCountry(request);
+            List<CountryResponse> countries_from_GetAllCountries = _countriesService.GetAllCountries();
             // Assert
             Assert.True(response.CountryID != Guid.Empty);
-            
+            Assert.Contains(response, countries_from_GetAllCountries);
+
         }
+        #endregion
+
+        #region GetAllCountries() Tests
+
+        [Fact]
+        // when there are no countries in the in-memory list, then GetAllCountries() should return an empty list
+        public void GetAllCountries_EmptyList()
+        {
+            // Act
+            List<CountryResponse> countries =
+            _countriesService.GetAllCountries();
+            // Assert
+            Assert.Empty(countries);
+        }
+
+        [Fact]
+        public void GetAllCountries_AddFewCountries()
+        {
+            // Arrange
+            List<CountryAddRequest> requests = new List<CountryAddRequest>
+            {
+                new CountryAddRequest
+                {
+                    CountryName = "USA"
+                },
+                new CountryAddRequest
+                {
+                    CountryName = "Canada"
+                }
+            };
+
+            List<CountryResponse> responses = new List<CountryResponse>();
+
+            foreach (var request in requests)
+            {
+               responses.Add(_countriesService.AddCountry(request));
+            }
+            // Act
+            List<CountryResponse> countries =
+            _countriesService.GetAllCountries();
+
+            // read each element from countries in responses and check whether it is present in countries or not
+            foreach (var response in responses)
+            {
+                Assert.Contains(response, countries);
+            }
+            // Assert
+            Assert.Equal(2, countries.Count);
+        }
+        #endregion
     }
 }
