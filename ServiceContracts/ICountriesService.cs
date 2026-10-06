@@ -3,23 +3,29 @@
 namespace ServiceContracts
 {
     /// <summary>
-    /// Interface for country-related services. represent business logic operations
-    /// related to countries, such as adding, retrieving, updating, and deleting country information.
+    /// Represents business logic for manipulating Country entity
     /// </summary>
     public interface ICountriesService
     {
         /// <summary>
-        /// Adds a new country based on the provided CountryAddRequest and returns a CountryResponse.
+        /// Adds a country object to the list of countries
         /// </summary>
-        /// <param name="countryAddRequest"></param>
-        /// <returns>the country object</returns>
-        /// 
-        CountryResponse AddCountry(CountryAddRequest?
-        countryAddRequest);
+        /// <param name="countryAddRequest">Country object to add</param>
+        /// <returns>Returns the country object after adding it (including newly generated country id)</returns>
+        CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
 
         /// <summary>
-        /// Retrieves a list of all countries.
+        /// Returns all countries from the list
         /// </summary>
+        /// <returns>All countries from the list as List of CountryResponse</CountryResponse></returns>
         List<CountryResponse> GetAllCountries();
+
+
+        /// <summary>
+        /// Returns a country object based on the given country id
+        /// </summary>
+        /// <param name="countryID">CountryID (guid) to search</param>
+        /// <returns>Matching country as CountryResponse object</returns>
+        CountryResponse? GetCountryByCountryID(Guid? countryID);
     }
 }

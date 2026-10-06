@@ -1,49 +1,69 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using ServiceContracts;
 using ServiceContracts.DTO;
-using Entities;
+
 namespace Services
 {
     public class CountriesService : ICountriesService
     {
-        // private field for storing countries in-memory
+        //private field
         private readonly List<Country> _countries;
 
-        // constructor to initialize the in-memory list of countries
+        //constructor
         public CountriesService()
         {
             _countries = new List<Country>();
         }
+
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
         {
-            // validation: check if countryAddRequest is null
+
+            //Validation: countryAddRequest parameter can't be null
             if (countryAddRequest == null)
             {
                 throw new ArgumentNullException(nameof(countryAddRequest));
             }
-            // validation: check if country name is null or empty
+
+            //Validation: CountryName can't be null
             if (countryAddRequest.CountryName == null)
             {
                 throw new ArgumentException(nameof(countryAddRequest.CountryName));
             }
-            // duplicate check: check if a country with the same name already exists in the in-memory list
+
+            //Validation: CountryName can't be duplicate
             if (_countries.Where(temp => temp.CountryName == countryAddRequest.CountryName).Count() > 0)
             {
-                throw new ArgumentException("country name already exists");
+                throw new ArgumentException("Given country name already exists");
             }
-            // validate countryAddRequest
+
+            //Convert object from CountryAddRequest to Country type
             Country country = countryAddRequest.ToCountry();
 
-            // generate countryID for the new country
+            //generate CountryID
             country.CountryID = Guid.NewGuid();
-            // Add the new country to the in-memory list
+
+            //Add country object into _countries
             _countries.Add(country);
+
             return country.ToCountryResponse();
         }
 
         public List<CountryResponse> GetAllCountries()
         {
             return _countries.Select(country => country.ToCountryResponse()).ToList();
+        }
 
+        public CountryResponse? GetCountryByCountryID(Guid? countryID)
+        {
+            if (countryID == null)
+                return null;
+
+            Country? country_response_from_list = _countries.FirstOrDefault(temp => temp.CountryID == countryID);
+
+            if (country_response_from_list == null)
+                return null;
+
+            return country_response_from_list.ToCountryResponse();
         }
     }
 }
