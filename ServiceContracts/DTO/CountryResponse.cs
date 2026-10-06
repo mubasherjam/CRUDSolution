@@ -3,20 +3,22 @@ using Entities;
 
 namespace ServiceContracts.DTO
 {
+    /// <summary>
+    /// DTO class that is used as return type for most of CountriesService methods
+    /// </summary>
     public class CountryResponse
     {
-        /// <summary>
-        /// DTO for representing a country in the response. This class contains the information about a country to be returned by the API.
-        /// </summary>
         public Guid CountryID { get; set; }
         public string? CountryName { get; set; }
 
+        //It compares the current object to another object of CountryResponse type and returns true, if both values are same; otherwise returns false
         public override bool Equals(object? obj)
         {
             if (obj == null)
             {
                 return false;
             }
+
             if (obj.GetType() != typeof(CountryResponse))
             {
                 return false;
@@ -25,22 +27,20 @@ namespace ServiceContracts.DTO
 
             return CountryID == country_to_compare.CountryID && CountryName == country_to_compare.CountryName;
         }
+
+        //returns an unique key for the current object
         public override int GetHashCode()
         {
             return base.GetHashCode();
         }
-
     }
 
-    public static class  CountryExtensions
+    public static class CountryExtensions
     {
+        //Converts from Country object to CountryResponse object
         public static CountryResponse ToCountryResponse(this Country country)
         {
-            return new CountryResponse()
-            {
-                CountryID = country.CountryID,
-                CountryName = country.CountryName
-            };
+            return new CountryResponse() { CountryID = country.CountryID, CountryName = country.CountryName };
         }
     }
 }
