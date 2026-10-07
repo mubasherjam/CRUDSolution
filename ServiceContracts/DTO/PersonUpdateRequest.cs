@@ -1,9 +1,8 @@
-﻿using Entities;
-using ServiceContracts.Enums;
+﻿using ServiceContracts.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
+using Entities;
 
 namespace ServiceContracts.DTO
 {
