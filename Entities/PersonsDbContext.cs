@@ -22,20 +22,28 @@ namespace Entities
             modelBuilder.Entity<Country>().ToTable("Countries");
             modelBuilder.Entity<Person>().ToTable("Persons");
 
+            // Seed from JSON files placed in the application's output directory
+            string basePath = AppContext.BaseDirectory;
+
             //Seed to Countries
-            string countriesJson = System.IO.File.ReadAllText("countries.json");
-            List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson);
-
-            foreach (Country country in countries)
-                modelBuilder.Entity<Country>().HasData(country);
-
+            string countriesJsonPath = System.IO.Path.Combine(basePath, "countries.json");
+            if (System.IO.File.Exists(countriesJsonPath))
+            {
+                string countriesJson = System.IO.File.ReadAllText(countriesJsonPath);
+                List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson) ?? new List<Country>();
+                foreach (Country country in countries)
+                    modelBuilder.Entity<Country>().HasData(country);
+            }
 
             //Seed to Persons
-            string personsJson = System.IO.File.ReadAllText("persons.json");
-            List<Person> persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson);
-
-            foreach (Person person in persons)
-                modelBuilder.Entity<Person>().HasData(person);
+            string personsJsonPath = System.IO.Path.Combine(basePath, "persons.json");
+            if (System.IO.File.Exists(personsJsonPath))
+            {
+                string personsJson = System.IO.File.ReadAllText(personsJsonPath);
+                List<Person> persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson) ?? new List<Person>();
+                foreach (Person person in persons)
+                    modelBuilder.Entity<Person>().HasData(person);
+            }
 
 
             //Fluent API
@@ -48,7 +56,7 @@ namespace Entities
             //  .HasIndex(temp => temp.TIN).IsUnique();
 
             modelBuilder.Entity<Person>()
-              .HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
+              .ToTable(t => t.HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8"));
 
             //Table Relations
             modelBuilder.Entity<Person>(entity =>
